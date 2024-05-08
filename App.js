@@ -16,18 +16,18 @@ const getData = () => {
 const App = () => {
   // datas array of object
   const [datas, setdatas] = useState(getData());
-
+  const [isFormOpen, setIsFormOpen] = useState(false);
   // input field states
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');
   //const [toggleSubmit, setToggleSubmit] = useState(false);
   const [editData, setEditData] = useState(null);
-  
-  const [count,setCount]= useState(datas.length);
+
+  const [count, setCount] = useState(datas.length);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (title ) {
+    if (title) {
       setdatas(
         datas.map((data) => {
           if (data.id === editData) {
@@ -42,16 +42,16 @@ const App = () => {
       setEditData(null);
     }
 
-
     let val = {
       id: Math.random().toString(),
       title,
       password
     }
     setdatas([...datas, val,])
-    setCount(count+1);
+    setCount(count + 1);
     setTitle('');
     setPassword('');
+    setIsFormOpen(false)
   }
 
   function handleDelete(id) {
@@ -59,7 +59,8 @@ const App = () => {
       return Element.id !== id;
     })
     setdatas(filteredDatas);
-    setCount(count-1);
+    setCount(count - 1);
+    setIsFormOpen(false)
   }
 
   const handleEdit = (id) => {
@@ -69,6 +70,7 @@ const App = () => {
     setPassword(editDatas.password)
     setEditData(id);
     handleDelete(id);
+    setIsFormOpen(true)
   }
 
   useEffect(() => {
@@ -80,18 +82,21 @@ const App = () => {
     <div className='container'>
       <h1 className='title'>Password Keeper</h1>
       <p className='title'> count:-{count}</p>
-      
-      <div>
-        <form className='container' onSubmit={submitHandler}>
-          <label htmlFor="name">Title:-</label>
-          <input type="text" id="name" onChange={(e) => setTitle(e.target.value)} value={title} />
+      <button onClick={(e) => { setIsFormOpen(true) }}> Add Student</button>
+      {isFormOpen &&
+        <div>
+          <form className='container' onSubmit={submitHandler}>
+            <label htmlFor="name">Title:-</label>
+            <input type="text" id="name" onChange={(e) => setTitle(e.target.value)} value={title} />
 
-          <label htmlFor="password">Password:-</label>
-          <input type="text" id="password" onChange={(e) => setPassword(e.target.value)} value={password} />&ensp;
+            <label htmlFor="password">Password:-</label>
+            <input type="text" id="password" onChange={(e) => setPassword(e.target.value)} value={password} />&ensp;
 
-          <button type="submit">Submit</button>
-        </form>
-      </div>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      }
+
       <List datas={datas} handleDelete={handleDelete} handleEdit={handleEdit} />
     </div>
   );
